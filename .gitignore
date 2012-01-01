@@ -1,0 +1,4 @@
+*.html
+*.pyc
+parserconfig.py
+config.py

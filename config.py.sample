@@ -1,0 +1,6 @@
+KINDLE_MAIL = ""
+FROM = ""
+FROM_PASSWORD = ""
+FEEDURLS = [
+    # "http://rss.slashdot.org/Slashdot/slashdot",
+    ]

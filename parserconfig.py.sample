@@ -1,0 +1,15 @@
+## Use this file to define custom parse-functions
+
+# def parse_standard_at(item):
+#    from util import download
+#    f = download(item.link)
+#    from lxml import etree
+#    parser = etree.HTMLParser()
+#    tree = etree.parse(f, parser)
+#    res = tree.xpath('//div[@id="objectContent"]')
+#    for x in res:
+#        return etree.tostring(x, pretty_print=True)
+
+#LINK_PARSERS = dict({'derStandard.at': parse_standard_at} )
+
+LINK_PARSERS = dict()
