@@ -15,6 +15,7 @@ import os, sys, subprocess
 from util import *
 from config import *
 from parserconfig import *
+from StringIO import StringIO
 
 def parsefeed(feed):
     print "parsing feed: " + feed.feed.title
@@ -33,23 +34,20 @@ def parsefeed(feed):
             item_html += item.summary_detail.value + "\n"
         else:
             item_html += "<p>no content</p>"
-        m = re.findall("(\<img.[^>]*src=\"[^\"]+\"[^>]*/>)", item_html)
-        for match in m:
-            if re.search("feedads", match) or re.search("feedburner", match):
-                # purge empty <a>
-                item_html = re.sub(match, "", item_html)
-                item_html = re.sub("<a[^>]*></a>", "", item_html)
-            else:
-                #print "found image worth keeping"
-                source = re.findall("src=\"([^\"]*)", match)
-                if len(source) != 1:
-                    continue;
-                imgsource = source[0]
-                targetfile = escapeFileName(imgsource)
-                if not os.path.exists(targetfile):
-                    download(imgsource, targetfile)
-                match2 = re.sub(re.escape(imgsource), targetfile, match)
-                item_html = re.sub(re.escape(match), match2, item_html)
+
+        from lxml import etree
+        parser = etree.HTMLParser()
+        tree = etree.parse(StringIO(item_html), parser)
+        res = tree.xpath('//img')
+        for x in res:
+            print "found image %s" % etree.tostring(x, pretty_print=True)
+            originalSource = x.get("src")
+            if originalSource[0] == "/":
+                x.clear()
+                continue
+            filename = download(originalSource)
+            x.set("src", filename)
+        item_html = etree.tostring(tree, pretty_print=True)
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S.0", idate)
         newitems.append(dict(title = item.title, date = timestamp, content = item_html))
     return newitems
@@ -85,8 +83,8 @@ def main():
                 continue
             print "inserting new item " + item["title"]
             cursor.execute("INSERT INTO items(feedname, date, title, author, content) VALUES (?, ?, ?, ?, ?)", (title, item["date"], item["title"], "", item["content"],))
+            conn.commit()
 
-    conn.commit()
     cursor.close()
     conn.close()
         
