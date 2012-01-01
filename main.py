@@ -122,7 +122,7 @@ def main():
     if len(files) == 0:
         return
 
-#    sendfiletokindle(files)
+    sendfiletokindle(files)
         
 if __name__ == "__main__":
     main()
