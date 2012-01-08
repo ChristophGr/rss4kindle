@@ -61,7 +61,7 @@ def initTables(cursor):
     
 def main():
     import sqlite3
-    conn = sqlite3.connect("items.db")
+    conn = sqlite3.connect(os.path.join(FILESTORAGE, "items.db"))
     cursor = conn.cursor()
 
     initTables(cursor)

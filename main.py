@@ -25,7 +25,7 @@ def attachFilesToMessages(msg, files):
         part.add_header('Content-Disposition', 'attachment; filename="%s"'
                        % os.path.basename(f))
         msg.attach(part)
-
+ 
 def createMessage(to, subject):
     msg = MIMEMultipart()
     msg['From'] = FROM
@@ -69,7 +69,7 @@ def main():
         
     files = []
     
-    conn = sqlite3.connect("items.db")
+    conn = sqlite3.connect(os.path.join(FILESTORAGE, "items.db"))
     cursor = conn.cursor()
 
     items = cursor.execute("SELECT name FROM feeds").fetchall()
@@ -103,6 +103,7 @@ def main():
         index += "</ul>"
 
         fname = "%s-%s.html" % (folder, time.strftime("%Y-%m-%d_%H.%M.%S"))
+        fname = os.path.join(FILESTORAGE, fname)
         f = codecs.open(fname, 'w', encoding='utf-8')
         f.write(head)
         f.write(index)
@@ -111,7 +112,7 @@ def main():
         f.close()
         
         mobiname = re.sub(".html$", ".mobi", fname)
-            
+
         subprocess.call( ["ebook-convert", fname, mobiname] , env = env)
         files.append(mobiname)
         conn.commit()

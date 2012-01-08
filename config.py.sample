@@ -1,3 +1,4 @@
+FILESTORAGE = "/tmp"
 KINDLE_MAIL = ""
 FROM = ""
 FROM_PASSWORD = ""
